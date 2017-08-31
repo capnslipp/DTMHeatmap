@@ -10,7 +10,7 @@
 #import "DTMColorProvider.h"
 
 // This sets the spread of the heat from each map point (in screen pts.)
-static const NSInteger kSBHeatRadiusInPoints = 48;
+static const NSInteger kSBHeatRadiusInPoints = 100;
 
 @interface DTMHeatmapRenderer ()
 @property (nonatomic, readonly) float *scaleMatrix;
@@ -50,10 +50,19 @@ static const NSInteger kSBHeatRadiusInPoints = 48;
     }
 }
 
+- (BOOL)canDrawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale {
+    if (zoomScale > 0.054250 || zoomScale < 0.007812) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 - (void)drawMapRect:(MKMapRect)mapRect
           zoomScale:(MKZoomScale)zoomScale
           inContext:(CGContextRef)context
 {
+
     CGRect usRect = [self rectForMapRect:mapRect]; //rect in user space coordinates (NOTE: not in screen points)
     MKMapRect visibleRect = [self.overlay boundingMapRect];
     MKMapRect mapIntersect = MKMapRectIntersection(mapRect, visibleRect);
