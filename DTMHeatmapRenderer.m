@@ -41,8 +41,8 @@ static const NSInteger kSBHeatRadiusInPoints = 100;
             float scaleFactor = 1 - distance / kSBHeatRadiusInPoints;
             if (scaleFactor < 0) {
                 scaleFactor = 0;
-            } else {
-                scaleFactor = (expf(-distance/10.0) - expf(-kSBHeatRadiusInPoints/10.0)) / expf(0);
+            } else if (scaleFactor > 1) {
+                scaleFactor = 1;
             }
             
             _scaleMatrix[j * 2 * kSBHeatRadiusInPoints + i] = scaleFactor;
@@ -51,7 +51,7 @@ static const NSInteger kSBHeatRadiusInPoints = 100;
 }
 
 - (BOOL)canDrawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale {
-    if (zoomScale > 0.054250 || zoomScale < 0.007812) {
+    if (zoomScale > 0.054250 || zoomScale < 0.02812) {
         return false;
     } else {
         return true;
@@ -156,7 +156,8 @@ static const NSInteger kSBHeatRadiusInPoints = 100;
         CGImageRef cgImage = CGBitmapContextCreateImage(bitmapContext);
         UIImage *img = [UIImage imageWithCGImage:cgImage];
         UIGraphicsPushContext(context);
-        [img drawInRect:usIntersect];
+        //[img drawInRect:usIntersect];
+        [img drawInRect:usIntersect blendMode:kCGBlendModeNormal alpha:0.4];
         UIGraphicsPopContext();
         
         CFRelease(cgImage);

@@ -7,6 +7,7 @@
 //
 
 #import "DTMColorProvider.h"
+#import <AHEasing/easing.h>
 
 @implementation DTMColorProvider
 
@@ -16,34 +17,74 @@
                  blue:(CGFloat *)blue
                 alpha:(CGFloat *)alpha
 {
-    static int maxVal = 255;
-    static double maxOpacity = 0.7;
-
     value = MIN(1, MAX(0, value));
-    value = sqrt(value);
+    //value = CubicEaseOut(value);
 
+    /*
+    NSArray *colors = @[
+                        @[@(73), @(113), @(71)],
+                        @[@(73), @(113), @(71)],
+                        @[@(33), @(92), @(32)],
+                        @[@(34), @(140), @(62)],
+                        @[@(39), @(223), @(36)],
+                        ];
+     
+     */
 
-    double a = value * 9;
-    a = MIN(maxOpacity, MAX(0, a));
+    NSArray *colors = @[
+                        @[@(38), @(210), @(35)],
+                        @[@(38), @(210), @(35)],
+                        @[@(51), @(232), @(136)],
+                        @[@(14), @(226), @(10)],
+                        @[@(32), @(244), @(21)],
+                        ];
 
-    static double p1 = 0.17;
-    if (value < p1) {
-        double w1 = value / p1;
-        double w2 = 1 - w1;
+    NSArray *points = @[
+                        @(0.0),
+                        @(0.2),
+                        @(0.4),
+                        @(0.8),
+                        @(1.0),
+                        ];
 
-        *red = (50 * w1) + (0 * w2);
-        *green = (150 * w1) + (0 * w2);
-        *blue = (50 * w1) + (120 * w2);
-    } else {
-        double w1 = (value-p1) / (1-p1);
-        double w2 = 1 - w1;
+    NSArray *opacities = @[
+                           @(0.0),
+                           @(0.8),
+                           @(1),
+                           @(1),
+                           @(1),
+                           ];
 
-        *red = (102 * w1) + (50 * w2);
-        *green = (225 * w1) + (150 * w2);
-        *blue = (0 * w1) + (50 * w2);
+    // getting index for low
+    int index = 0;
+    while (index < points.count && [[points objectAtIndex:index] doubleValue] < value) {
+        index++;
     }
+    index--;
 
-    *alpha = a * maxVal;
+    // getting points
+    double pLow = [[points objectAtIndex:index] doubleValue];
+    double pHight = [[points objectAtIndex:index+1] doubleValue];
+
+    // getting colors
+    NSArray *color1 = [colors objectAtIndex:index];
+    NSArray *color2 = [colors objectAtIndex:index+1];
+
+    // getting color ratios
+    double color2Ratio = (value - pLow) / (pHight - pLow);
+    double color1Ratio = 1 - color2Ratio;
+
+    double opacity = ([[opacities objectAtIndex:index] doubleValue] * color1Ratio) +
+                     ([[opacities objectAtIndex:index+1] doubleValue] * color2Ratio);
+
+    *red = ([[color1 objectAtIndex:0] doubleValue] * color1Ratio) + ([[color2 objectAtIndex:0] doubleValue] * color2Ratio);
+    *green = ([[color1 objectAtIndex:1] doubleValue] * color1Ratio) + ([[color2 objectAtIndex:1] doubleValue] * color2Ratio);
+    *blue = ([[color1 objectAtIndex:2] doubleValue] * color1Ratio) + ([[color2 objectAtIndex:2] doubleValue] * color2Ratio);
+
+    *red *= opacity;
+    *green *= opacity;
+    *blue *= opacity;
+    *alpha = opacity * 255.0;
 
 }
 
