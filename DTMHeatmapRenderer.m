@@ -51,17 +51,23 @@ static const NSInteger kSBHeatRadiusInPoints = 100;
 }
 
 - (BOOL)canDrawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale {
-    if (zoomScale > 0.054250 || zoomScale < 0.02812) {
+    if (zoomScale > 0.054250 || zoomScale < 0.01112) {
         return false;
     } else {
         return true;
     }
 }
 
+
 - (void)drawMapRect:(MKMapRect)mapRect
           zoomScale:(MKZoomScale)zoomScale
           inContext:(CGContextRef)context
 {
+
+    double scaleFix = 1 - zoomScale/0.031250;
+    if (scaleFix > 1) {
+        scaleFix = 1;
+    }
 
     CGRect usRect = [self rectForMapRect:mapRect]; //rect in user space coordinates (NOTE: not in screen points)
     MKMapRect visibleRect = [self.overlay boundingMapRect];
@@ -116,7 +122,11 @@ static const NSInteger kSBHeatRadiusInPoints = 100;
                     // make sure this is a valid array index
                     if (row >= 0 && column >= 0 && row < rows && column < columns) {
                         int index = columns * row + column;
-                        double addVal = value * _scaleMatrix[j * 2 * kSBHeatRadiusInPoints + i];
+                        double m = _scaleMatrix[j * 2 * kSBHeatRadiusInPoints + i] - scaleFix;
+                        if (m < 0) {
+                            m = 0;
+                        }
+                        double addVal = value * m;
                         pointValues[index] += addVal;
                     }
                 }
@@ -126,12 +136,18 @@ static const NSInteger kSBHeatRadiusInPoints = 100;
 
     CGFloat red, green, blue, alpha;
     uint indexOrigin;
-    unsigned char *rgba = (unsigned char *)calloc(arrayLen * 4, sizeof(unsigned char));
+    unsigned int size = arrayLen * 4;
+    unsigned char *rgba = (unsigned char *)calloc(size, sizeof(unsigned char));
     DTMColorProvider *colorProvider = [hm colorProvider];
 
     for (int i = 0; i < arrayLen; i++) {
         if (pointValues[i] != 0) {
             indexOrigin = 4 * i;
+
+            if (indexOrigin >= size) {
+                break;
+            }
+
             [colorProvider colorForValue:pointValues[i]
                                      red:&red
                                    green:&green
