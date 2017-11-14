@@ -10,7 +10,8 @@
 #import "DTMColorProvider.h"
 
 // This sets the spread of the heat from each map point (in screen pts.)
-static const NSInteger kSBHeatRadiusInPoints = 100;
+// static const NSInteger kSBHeatRadiusInPoints = 100;
+static const NSInteger kSBHeatRadiusInPoints = 32;
 
 @interface DTMHeatmapRenderer ()
 @property (nonatomic, readonly) float *scaleMatrix;
@@ -51,7 +52,8 @@ static const NSInteger kSBHeatRadiusInPoints = 100;
 }
 
 - (BOOL)canDrawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale {
-    if (zoomScale > 0.054250 || zoomScale < 0.01112) {
+    //if (zoomScale > 0.054250 || zoomScale < 0.01112) {
+    if (zoomScale > 0.054250 || zoomScale < 0.00112) {
         return false;
     } else {
         return true;
