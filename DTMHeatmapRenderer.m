@@ -10,8 +10,7 @@
 #import "DTMColorProvider.h"
 
 // This sets the spread of the heat from each map point (in screen pts.)
-// static const NSInteger kSBHeatRadiusInPoints = 100;
-static const NSInteger kSBHeatRadiusInPoints = 32;
+static const NSInteger kSBHeatRadiusInPoints = 350;
 
 @interface DTMHeatmapRenderer ()
 @property (nonatomic, readonly) float *scaleMatrix;
@@ -51,22 +50,11 @@ static const NSInteger kSBHeatRadiusInPoints = 32;
     }
 }
 
-- (BOOL)canDrawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale {
-    //if (zoomScale > 0.054250 || zoomScale < 0.01112) {
-    if (zoomScale > 0.054250 || zoomScale < 0.00112) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-
 - (void)drawMapRect:(MKMapRect)mapRect
           zoomScale:(MKZoomScale)zoomScale
           inContext:(CGContextRef)context
 {
-
-    double scaleFix = 1 - zoomScale/0.031250;
+    double scaleFix = 1 - zoomScale/0.5;
     if (scaleFix > 1) {
         scaleFix = 1;
     }
@@ -138,6 +126,7 @@ static const NSInteger kSBHeatRadiusInPoints = 32;
 
     CGFloat red, green, blue, alpha;
     uint indexOrigin;
+    
     unsigned int size = arrayLen * 4;
     unsigned char *rgba = (unsigned char *)calloc(size, sizeof(unsigned char));
     DTMColorProvider *colorProvider = [hm colorProvider];
@@ -146,9 +135,11 @@ static const NSInteger kSBHeatRadiusInPoints = 32;
         if (pointValues[i] != 0) {
             indexOrigin = 4 * i;
 
+            /*
             if (indexOrigin >= size) {
                 break;
             }
+             */
 
             [colorProvider colorForValue:pointValues[i]
                                      red:&red
