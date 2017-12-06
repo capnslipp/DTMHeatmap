@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 
+
 static const CGFloat kSBMapRectPadding = 100000;
 static const int kSBZoomZeroDimension = 256;
 static const int kSBMapKitPoints = 536870912;
@@ -19,7 +20,8 @@ static const int kSBScalePower = 4;
 
 // Alterable constant to trade off accuracy with performance
 // Increase for big data sets which draw slowly
-static const int kSBScreenPointsPerBucket = 10;
+// static const int kSBScreenPointsPerBucket = 10;
+static const int kSBScreenPointsPerBucket = 12;
 
 @class DTMColorProvider;
 

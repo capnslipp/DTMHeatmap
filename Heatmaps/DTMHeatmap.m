@@ -58,7 +58,7 @@
         if (point.y < upperLeftPoint.y) upperLeftPoint.y = point.y;
         if (point.x > lowerRightPoint.x) lowerRightPoint.x = point.x;
         if (point.y > lowerRightPoint.y) lowerRightPoint.y = point.y;
-        
+
         double abs = ABS(value);
         if (abs > self.maxValue) {
             self.maxValue = abs;

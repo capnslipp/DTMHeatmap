@@ -8,6 +8,7 @@
 
 #import "DTMHeatmapRenderer.h"
 #import "DTMColorProvider.h"
+#import "easing.h"
 
 // This sets the spread of the heat from each map point (in screen pts.)
 static const NSInteger kSBHeatRadiusInPoints = 350;
@@ -50,13 +51,41 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
     }
 }
 
+- (BOOL)canDrawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale {
+    return zoomScale < 1.0;
+}
+
+
 - (void)drawMapRect:(MKMapRect)mapRect
           zoomScale:(MKZoomScale)zoomScale
           inContext:(CGContextRef)context
 {
+
     double scaleFix = 1 - zoomScale/0.5;
     if (scaleFix > 1) {
         scaleFix = 1;
+    }
+    NSLog(@"%f", scaleFix);
+    if (scaleFix <= 0) {
+
+    } else if (scaleFix <= 0.75) {
+        scaleFix -= 0.15;
+    } else if (scaleFix <= 0.85) {
+        scaleFix -= 0.12;
+    } else if (scaleFix <= 0.875000) {
+        scaleFix -= 0.13;
+    } else if (scaleFix <= 0.937500) {
+        scaleFix -= 0.112;
+    } else if (scaleFix <= 0.968750) {
+        scaleFix -= 0.11;
+    } else if (scaleFix <= 0.984375) {
+        scaleFix -= 0.091;
+    } else if (scaleFix <= 0.992188) {
+        scaleFix -= 0.071;
+    } else if (scaleFix <= 0.996094) {
+        scaleFix -= 0.043;
+    } else {
+        scaleFix -= 0.08;
     }
 
     CGRect usRect = [self rectForMapRect:mapRect]; //rect in user space coordinates (NOTE: not in screen points)
@@ -102,19 +131,27 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
                                           (usPoint.y - usRect.origin.y) * zoomScale);
 
         if (value != 0 && !isnan(value)) { // don't bother with 0 or NaN
+            // just looping through the indices with values
+            NSInteger newRadius = kSBHeatRadiusInPoints * (1-scaleFix);
+            if (newRadius > kSBHeatRadiusInPoints) {
+                newRadius = kSBHeatRadiusInPoints;
+            }
+            NSInteger excess = kSBHeatRadiusInPoints - newRadius;
             // iterate through surrounding pixels and increase
-            for (int i = 0; i < 2 * kSBHeatRadiusInPoints; i++) {
-                for (int j = 0; j < 2 * kSBHeatRadiusInPoints; j++) {
+            for (int i = 0; i < 2 * newRadius; i++) {
+                for (int j = 0; j < 2 * newRadius; j++) {
+
                     // find the array index
-                    int column = floor(matrixCoord.x - kSBHeatRadiusInPoints + i);
-                    int row = floor(matrixCoord.y - kSBHeatRadiusInPoints + j);
+                    int column = floor(matrixCoord.x - newRadius + i);
+                    int row = floor(matrixCoord.y - newRadius + j);
 
                     // make sure this is a valid array index
                     if (row >= 0 && column >= 0 && row < rows && column < columns) {
                         int index = columns * row + column;
-                        double m = _scaleMatrix[j * 2 * kSBHeatRadiusInPoints + i] - scaleFix;
+                        double m = _scaleMatrix[(j+excess) * 2 * kSBHeatRadiusInPoints + (i+excess)] - scaleFix;
                         if (m < 0) {
                             m = 0;
+                            continue;
                         }
                         double addVal = value * m;
                         pointValues[index] += addVal;
@@ -123,6 +160,8 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
             }
         }
     }
+
+    //NSLog(@"1 %f", [[NSDate date] timeIntervalSince1970] - [date timeIntervalSince1970]);
 
     CGFloat red, green, blue, alpha;
     uint indexOrigin;
@@ -134,13 +173,6 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
     for (int i = 0; i < arrayLen; i++) {
         if (pointValues[i] != 0) {
             indexOrigin = 4 * i;
-
-            /*
-            if (indexOrigin >= size) {
-                break;
-            }
-             */
-
             [colorProvider colorForValue:pointValues[i]
                                      red:&red
                                    green:&green
@@ -153,6 +185,8 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
             rgba[indexOrigin + 3] = alpha;
         }
     }
+
+    //NSLog(@"2   %f", [[NSDate date] timeIntervalSince1970] - [date timeIntervalSince1970]);
 
     free(pointValues);
 
@@ -170,7 +204,7 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
     UIImage *img = [UIImage imageWithCGImage:cgImage];
     UIGraphicsPushContext(context);
     //[img drawInRect:usIntersect];
-    [img drawInRect:usIntersect blendMode:kCGBlendModeNormal alpha:0.4];
+    [img drawInRect:usIntersect blendMode:kCGBlendModeNormal alpha:0.5];
     UIGraphicsPopContext();
 
     CFRelease(cgImage);
@@ -178,6 +212,7 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
     CFRelease(colorSpace);
     free(rgba);
 
+    //NSLog(@"3      %f", [[NSDate date] timeIntervalSince1970] - [date timeIntervalSince1970]);
 }
 
 @end

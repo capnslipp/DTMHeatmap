@@ -9,18 +9,24 @@
 #import "DTMColorProvider.h"
 #import <AHEasing/easing.h>
 
-int pointCount = 5;
+int pointCount = 4;
 
-double colors[5][3] = {
-    {38, 210, 35},
-    {38, 210, 35},
-    {51, 232, 136},
-    {14, 226, 10},
-    {32, 244, 21},
+double colors[4][3] = {
+    /*
+    Simon Broström [2:55 PM]
+    ‘rgba(119, 27, 189, 0)’,
+    ‘rgba(18, 157, 218, 1)’,
+    ‘rgba(0, 255, 201, 1)’,
+    ‘rgba(106, 252, 156, 1)’,
+    */
+    {119, 27, 189},
+    {18, 157, 218},
+    {0, 255, 201},
+    {106, 252, 156},
 };
 
-double points[5] = {0.0, 0.2, 0.4, 0.8, 1.0};
-double opacities[5] = {0.0, 0.8, 1, 1, 1};
+double points[4] = {0.0, 0.33, 0.66, 1.0};
+double opacities[4] = {0.0, 1, 1, 1};
 
 @implementation DTMColorProvider
 
@@ -65,3 +71,4 @@ double opacities[5] = {0.0, 0.8, 1, 1, 1};
 }
 
 @end
+
