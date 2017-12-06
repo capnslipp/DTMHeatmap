@@ -65,7 +65,7 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
     if (scaleFix > 1) {
         scaleFix = 1;
     }
-    NSLog(@"%f", scaleFix);
+    
     if (scaleFix <= 0) {
 
     } else if (scaleFix <= 0.75) {
