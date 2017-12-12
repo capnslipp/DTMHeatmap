@@ -21,7 +21,7 @@ static const int kSBScalePower = 4;
 // Alterable constant to trade off accuracy with performance
 // Increase for big data sets which draw slowly
 // static const int kSBScreenPointsPerBucket = 10;
-static const int kSBScreenPointsPerBucket = 12;
+static const int kSBScreenPointsPerBucket = 3;
 
 @class DTMColorProvider;
 

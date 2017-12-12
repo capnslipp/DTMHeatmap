@@ -11,6 +11,7 @@
 #import "easing.h"
 
 // This sets the spread of the heat from each map point (in screen pts.)
+//static const NSInteger kSBHeatRadiusInPoints = 350;
 static const NSInteger kSBHeatRadiusInPoints = 350;
 
 @interface DTMHeatmapRenderer ()
@@ -52,7 +53,7 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
 }
 
 - (BOOL)canDrawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale {
-    return zoomScale < 1.0;
+    return zoomScale < 1.0 && zoomScale > 0.0009;
 }
 
 
@@ -65,27 +66,14 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
     if (scaleFix > 1) {
         scaleFix = 1;
     }
-    
-    if (scaleFix <= 0) {
 
-    } else if (scaleFix <= 0.75) {
-        scaleFix -= 0.15;
-    } else if (scaleFix <= 0.85) {
-        scaleFix -= 0.12;
-    } else if (scaleFix <= 0.875000) {
-        scaleFix -= 0.13;
-    } else if (scaleFix <= 0.937500) {
-        scaleFix -= 0.112;
-    } else if (scaleFix <= 0.968750) {
-        scaleFix -= 0.11;
-    } else if (scaleFix <= 0.984375) {
-        scaleFix -= 0.091;
-    } else if (scaleFix <= 0.992188) {
-        scaleFix -= 0.071;
-    } else if (scaleFix <= 0.996094) {
-        scaleFix -= 0.043;
-    } else {
-        scaleFix -= 0.08;
+    double diff = scaleFix - 0.9;
+    if (diff > 0) {
+        scaleFix -= diff * 0.1;
+    }
+
+    if (scaleFix >= 0.988242) {
+        scaleFix -= 0.03;
     }
 
     CGRect usRect = [self rectForMapRect:mapRect]; //rect in user space coordinates (NOTE: not in screen points)
@@ -127,8 +115,8 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
         // figure out the correspoinding array index
         CGPoint usPoint = [self pointForMapPoint:mapPoint];
 
-        CGPoint matrixCoord = CGPointMake((usPoint.x - usRect.origin.x) * zoomScale,
-                                          (usPoint.y - usRect.origin.y) * zoomScale);
+        CGPoint matrixCoord = CGPointMake((usPoint.x - usRect.origin.x) * zoomScale + 1,
+                                          (usPoint.y - usRect.origin.y) * zoomScale + 1);
 
         if (value != 0 && !isnan(value)) { // don't bother with 0 or NaN
             // just looping through the indices with values
@@ -149,6 +137,7 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
                     if (row >= 0 && column >= 0 && row < rows && column < columns) {
                         int index = columns * row + column;
                         double m = _scaleMatrix[(j+excess) * 2 * kSBHeatRadiusInPoints + (i+excess)] - scaleFix;
+                        m /= (1.0-(scaleFix));
                         if (m < 0) {
                             m = 0;
                             continue;
@@ -160,8 +149,6 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
             }
         }
     }
-
-    //NSLog(@"1 %f", [[NSDate date] timeIntervalSince1970] - [date timeIntervalSince1970]);
 
     CGFloat red, green, blue, alpha;
     uint indexOrigin;
@@ -186,8 +173,6 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
         }
     }
 
-    //NSLog(@"2   %f", [[NSDate date] timeIntervalSince1970] - [date timeIntervalSince1970]);
-
     free(pointValues);
 
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -211,8 +196,6 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
     CFRelease(bitmapContext);
     CFRelease(colorSpace);
     free(rgba);
-
-    //NSLog(@"3      %f", [[NSDate date] timeIntervalSince1970] - [date timeIntervalSince1970]);
 }
 
 @end

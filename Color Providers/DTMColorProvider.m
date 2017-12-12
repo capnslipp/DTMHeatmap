@@ -25,7 +25,7 @@ double colors[4][3] = {
     {106, 252, 156},
 };
 
-double points[4] = {0.0, 0.33, 0.66, 1.0};
+double points[4] = {0.0, 0.4, 0.6, 1.0};
 double opacities[4] = {0.0, 1, 1, 1};
 
 @implementation DTMColorProvider
