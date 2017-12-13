@@ -52,11 +52,6 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
     }
 }
 
-- (BOOL)canDrawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale {
-    return zoomScale < 1.0 && zoomScale > 0.0009;
-}
-
-
 - (void)drawMapRect:(MKMapRect)mapRect
           zoomScale:(MKZoomScale)zoomScale
           inContext:(CGContextRef)context
@@ -67,19 +62,20 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
         scaleFix = 1;
     }
 
-    double diff = scaleFix - 0.9;
-    if (diff > 0) {
-        scaleFix -= diff * 0.1;
+    if (scaleFix >= 0.999) {
+        scaleFix *= 0.97;
+    } else if (scaleFix >= 0.998) {
+        scaleFix *= 0.98;
+    } else {
+        scaleFix *= 0.99;
     }
 
-    if (scaleFix >= 0.988242) {
-        scaleFix -= 0.03;
-    }
 
     CGRect usRect = [self rectForMapRect:mapRect]; //rect in user space coordinates (NOTE: not in screen points)
-    MKMapRect visibleRect = [self.overlay boundingMapRect];
-    MKMapRect mapIntersect = MKMapRectIntersection(mapRect, visibleRect);
-    CGRect usIntersect = [self rectForMapRect:mapIntersect]; //rect in user space coordinates (NOTE: not in screen points)
+    //MKMapRect visibleRect = [self.overlay boundingMapRect];
+    //MKMapRect mapIntersect = MKMapRectIntersection(mapRect, visibleRect);
+    //CGRect usIntersect = [self rectForMapRect:mapIntersect]; //rect in user space coordinates (NOTE: not in screen points)
+    CGRect usIntersect = usRect;
 
     int columns = ceil(CGRectGetWidth(usRect) * zoomScale);
     int rows = ceil(CGRectGetHeight(usRect) * zoomScale);
@@ -157,6 +153,7 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
     unsigned char *rgba = (unsigned char *)calloc(size, sizeof(unsigned char));
     DTMColorProvider *colorProvider = [hm colorProvider];
 
+
     for (int i = 0; i < arrayLen; i++) {
         if (pointValues[i] != 0) {
             indexOrigin = 4 * i;
@@ -172,6 +169,18 @@ static const NSInteger kSBHeatRadiusInPoints = 350;
             rgba[indexOrigin + 3] = alpha;
         }
     }
+
+    /*
+    int r = arc4random_uniform(255);
+    for (int i = 0; i < arrayLen; i++) {
+        indexOrigin = 4 * i;
+
+        rgba[indexOrigin] = r;
+        rgba[indexOrigin + 1] = r;
+        rgba[indexOrigin + 2] = r;
+        rgba[indexOrigin + 3] = 255;
+    }
+      */
 
     free(pointValues);
 
