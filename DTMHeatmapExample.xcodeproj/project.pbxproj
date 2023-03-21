@@ -22,6 +22,8 @@
 		EDAC95301A5DC8FE00E8403E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = EDAC952E1A5DC8FE00E8403E /* LaunchScreen.xib */; };
 		EDAC95461A5DC9A100E8403E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDAC95451A5DC9A100E8403E /* MapKit.framework */; };
 		EDAC954E1A5DC9F000E8403E /* DTMHeatmapRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = EDAC954C1A5DC9F000E8403E /* DTMHeatmapRenderer.m */; };
+		FA3127B529C9FF5900248A33 /* easing.c in Sources */ = {isa = PBXBuildFile; fileRef = FA3127B329C9FF5900248A33 /* easing.c */; };
+		FA3127B629C9FF5900248A33 /* CAKeyframeAnimation+AHEasing.m in Sources */ = {isa = PBXBuildFile; fileRef = FA3127B429C9FF5900248A33 /* CAKeyframeAnimation+AHEasing.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,10 @@
 		EDAC95451A5DC9A100E8403E /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		EDAC954B1A5DC9F000E8403E /* DTMHeatmapRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTMHeatmapRenderer.h; sourceTree = "<group>"; };
 		EDAC954C1A5DC9F000E8403E /* DTMHeatmapRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTMHeatmapRenderer.m; sourceTree = "<group>"; };
+		FA3127B129C9FF5900248A33 /* CAKeyframeAnimation+AHEasing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CAKeyframeAnimation+AHEasing.h"; sourceTree = "<group>"; };
+		FA3127B229C9FF5900248A33 /* easing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = easing.h; sourceTree = "<group>"; };
+		FA3127B329C9FF5900248A33 /* easing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = easing.c; sourceTree = "<group>"; };
+		FA3127B429C9FF5900248A33 /* CAKeyframeAnimation+AHEasing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CAKeyframeAnimation+AHEasing.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +105,7 @@
 		EDAC95131A5DC8FE00E8403E = {
 			isa = PBXGroup;
 			children = (
+				FA3127B029C9FF5900248A33 /* AHEasing */,
 				EDAC95481A5DC9DE00E8403E /* Heatmap */,
 				EDAC951E1A5DC8FE00E8403E /* DTMHeatmapExample */,
 				EDAC95471A5DC9CB00E8403E /* Frameworks */,
@@ -157,6 +164,18 @@
 				EDAC954C1A5DC9F000E8403E /* DTMHeatmapRenderer.m */,
 			);
 			name = Heatmap;
+			sourceTree = "<group>";
+		};
+		FA3127B029C9FF5900248A33 /* AHEasing */ = {
+			isa = PBXGroup;
+			children = (
+				FA3127B129C9FF5900248A33 /* CAKeyframeAnimation+AHEasing.h */,
+				FA3127B229C9FF5900248A33 /* easing.h */,
+				FA3127B329C9FF5900248A33 /* easing.c */,
+				FA3127B429C9FF5900248A33 /* CAKeyframeAnimation+AHEasing.m */,
+			);
+			name = AHEasing;
+			path = AHEasing/AHEasing;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,6 +257,8 @@
 				ED0BBA071A65B3A900110424 /* DTMColorProvider.m in Sources */,
 				ED0BBA081A65B3A900110424 /* DTMDiffColorProvider.m in Sources */,
 				EDAC95221A5DC8FE00E8403E /* main.m in Sources */,
+				FA3127B629C9FF5900248A33 /* CAKeyframeAnimation+AHEasing.m in Sources */,
+				FA3127B529C9FF5900248A33 /* easing.c in Sources */,
 				EDAC954E1A5DC9F000E8403E /* DTMHeatmapRenderer.m in Sources */,
 				ED07C28A1A64299B006B26CA /* DTMDiffHeatmap.m in Sources */,
 			);
